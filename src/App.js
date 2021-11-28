@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -15,39 +15,34 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function BasicGrid() {
-  let [quantity, setQuantity] = React.useState(0);
-  let [loading, setLoading] = React.useState(true)
+const App = () => {
+  const [quantity, setQuantity] = useState(0);
+  const [loading, setLoading] = useState(true)
 
-  const plusQuantity = () => {
-    setQuantity(quantity + 1)
-    updateValue()
-  }
-  const minusQuantity = () => {
-    setQuantity(quantity - 1)
-    updateValue()
-  }
-
-  React.useEffect(() => {
-    // axios.get(url, header).then(res => {
-    //   setQuantity()
-    // })
+  
+  useEffect(() => {
+    axios.get("https://interview-8e4c5-default-rtdb.firebaseio.com/front-end/anamika.json").then(res => {
+      setQuantity(res.data)
+    })
   }, [])
 
   const updateValue = () => {
-    // let data = {
-    //   'counter1': quantity
-    // }
-    // axios.put(link, data)
+    let data = {
+      'anamika': quantity
+    }
+    axios.put("https://interview-8e4c5-default-rtdb.firebaseio.com/front-end.json", data)
   }
   return (
     <Box sx={{ flexGrow: 1 }} className="App">
       <Grid container spacing={2}>
-        <Grid item lg={12} style={{textAlign:"center"}}>
+        {/* <Grid item lg={12} style={{textAlign:"center"}}>
           {loading ? <> <CircularProgress /> {"saving counter value"} </>: "" }
-        </Grid>
+        </Grid> */}
         <Grid item lg={12}>
-          <Button variant="outlined" onClick={minusQuantity}>{'<'}</Button>
+          <Button variant="outlined" onClick={() => {
+            setQuantity(quantity - 1)
+            updateValue()
+          }}>{'<'}</Button>
           <TextField id="outlined-basic" variant="outlined" className="input-cus" onChange={(event) => {
             if (event.target.value > 1000) {
               return
@@ -62,7 +57,10 @@ export default function BasicGrid() {
             value={quantity}
             style={{height:3}}
           />
-          <Button variant="outlined" onClick={plusQuantity}>{'>'}</Button>
+          <Button variant="outlined" onClick={() => {
+            setQuantity(quantity + 1)
+            updateValue()
+          }}>{'>'}</Button>
 
         </Grid>
         <Grid item lg={12}>
@@ -73,3 +71,6 @@ export default function BasicGrid() {
     </Box>
   );
 }
+
+
+export default App;
